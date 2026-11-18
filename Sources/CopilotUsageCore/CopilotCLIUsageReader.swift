@@ -16,15 +16,16 @@ public enum CopilotCLIUsageReader {
 		guard let scriptURL = Bundle.main.url(forResource: "usage-percent", withExtension: "sh") else {
 			throw ReaderError.helperNotFound
 		}
-		guard let workingDirectory = Bundle.main.object(forInfoDictionaryKey: "CopilotUsageCLIWorkingDirectory") as? String,
-			  FileManager.default.fileExists(atPath: workingDirectory) else {
+		let workingDirectory = Bundle.main.bundleURL
+			.appendingPathComponent("Contents/Resources", isDirectory: true)
+		guard FileManager.default.fileExists(atPath: workingDirectory.path) else {
 			throw ReaderError.workingDirectoryNotFound
 		}
 
 		let process = Process()
 		process.executableURL = URL(fileURLWithPath: "/bin/sh")
 		process.arguments = [scriptURL.path]
-		process.currentDirectoryURL = URL(fileURLWithPath: workingDirectory, isDirectory: true)
+		process.currentDirectoryURL = workingDirectory
 		var environment = ProcessInfo.processInfo.environment
 		let home = FileManager.default.homeDirectoryForCurrentUser.path
 		let additionalPaths = [

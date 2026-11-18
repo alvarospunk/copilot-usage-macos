@@ -2,24 +2,27 @@
 
 Copilot Usage is a macOS menu-bar app that displays current GitHub Copilot Plan usage and monthly working-day pacing.
 
-## Requirements
+## Prerequisites
 
 - macOS 13 or later
-- Xcode Command Line Tools with Swift 6
-- GitHub Copilot CLI installed and authenticated
+- Zsh (included with macOS; required only by the installer)
+- Xcode Command Line Tools with Swift 6 or later (the installer builds the app from source)
+- GitHub Copilot CLI installed and authenticated to an account with Copilot Plan access
 - `/usr/bin/expect` available
 
-The first Copilot CLI run may ask you to trust this repository directory. Review the prompt and choose whether to trust it.
+The app reads usage by running `copilot -i /usage` in a hidden pseudoterminal. The GitHub CLI (`gh`) is not required. Network access to GitHub Copilot is required for usage refreshes; network access to Nager.Date is optional and only provides holiday suggestions. No Screen Recording, Accessibility, or microphone permission is needed. The app's first-launch consent dialog is separate from macOS privacy permissions.
 
-## Build and Run
+## Install
 
-Build and open the menu-bar app from this repository root:
+From the repository root, run the single installer:
 
 ```sh
-sh run.sh
+zsh install.zsh
 ```
 
-The app is installed at `~/Applications/Copilot Usage.app`. It uses local ad-hoc signing for this machine; distributing it to other users requires proper Developer ID signing and notarization.
+The installer builds the menu-bar app, installs it at `~/Applications/Copilot Usage.app`, and opens it. On first install, it starts the Copilot CLI in the app's Resources folder so you can authenticate and explicitly trust that folder. Wait for the usage view, then exit with Ctrl+C; the installer verifies the CLI before opening the app.
+
+The app uses local ad-hoc signing for this machine. A distributable Homebrew Cask requires a public release and Developer ID signing with notarization. This repository remains private, and no Developer ID signing identity is configured.
 
 To print only the current Copilot Plan percentage to the terminal:
 
@@ -35,7 +38,7 @@ On the first manual run, the app installs a per-user LaunchAgent that checks at 
 
 Nager.Date is a third-party source and does not include Madrid city-specific holidays. The request sends only the country code and year. If it is unavailable, the dialog starts with an empty list for manual entry.
 
-The popover shows the current percentage, “Today you can spend until …”, “...% per working day”, and working days left. It omits the under/over-pace and total-remaining rows. The last successful check time is shown beneath the figures. A clockwise-arrow button with the tooltip “Refresh Copilot usage” runs the bundled `usage-percent.sh` command and updates the figures from the active account's Plan usage. The app does not open VS Code, capture the screen, or move the cursor. Copilot CLI must be installed and authenticated. The app starts it from the trusted repository directory used to build the bundle and adds common CLI install locations to its search path.
+The popover shows the current percentage, “Today you can spend until …”, “...% per working day”, and working days left. It omits the under/over-pace and total-remaining rows. The last successful check time is shown beneath the figures. A clockwise-arrow button with the tooltip “Refresh Copilot usage” runs the bundled `usage-percent.sh` command and updates the figures from the active account's Plan usage. The app does not open VS Code, capture the screen, or move the cursor. The app starts Copilot CLI from the app bundle's Resources folder and adds common CLI install locations to its search path, so it does not depend on the source checkout after installation.
 
 Usage is cached in the user's preferences. The app checks every minute by default. **Update frequency**, next to **Edit Holidays**, selects a persisted interval of 1, 5, 15, 30, or 60 minutes. Opening the popover reuses a reading within that interval; pressing the refresh arrow always requests a fresh CLI reading unless a read is already running. A refresh can return the same number: the app shows the Plan percentage reported by Copilot CLI, which may differ from other Copilot clients. Scheduled holiday prompts do not capture the screen.
 
@@ -55,5 +58,6 @@ Run the local checks:
 sh test.sh
 sh test-app-bundle.sh
 sh test-cli-plan-percent.sh
-sh -n run.sh usage-percent.sh build-app.sh test.sh test-app-bundle.sh test-cli-plan-percent.sh
+zsh -n install.zsh
+sh -n usage-percent.sh build-app.sh test.sh test-app-bundle.sh test-cli-plan-percent.sh
 ```

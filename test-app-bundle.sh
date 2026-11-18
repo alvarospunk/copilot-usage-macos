@@ -10,9 +10,11 @@ sh "$script_dir/build-app.sh" "$app_bundle"
 
 bundle_identifier=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_bundle/Contents/Info.plist")
 test "$bundle_identifier" = "com.jgarri.copilot-usage"
-cli_working_directory=$(/usr/libexec/PlistBuddy -c 'Print :CopilotUsageCLIWorkingDirectory' "$app_bundle/Contents/Info.plist")
-expected_working_directory=$script_dir
-test "$cli_working_directory" = "$expected_working_directory"
+if /usr/libexec/PlistBuddy -c 'Print :CopilotUsageCLIWorkingDirectory' "$app_bundle/Contents/Info.plist" >/dev/null 2>&1; then
+	printf 'App bundle must not contain a build-specific CLI working directory.\n' >&2
+	exit 1
+fi
+test -d "$app_bundle/Contents/Resources"
 test -x "$app_bundle/Contents/MacOS/copilot-usage"
 test -f "$app_bundle/Contents/Resources/usage-percent.sh"
 test -f "$app_bundle/Contents/Resources/cli-plan-percent.exp"
