@@ -4,11 +4,17 @@
 
 All installation options require macOS 13 or later, `/usr/bin/expect`, network access to GitHub Copilot, and the standalone `copilot` CLI authenticated to an account with Copilot access. The GitHub CLI (`gh`) is not required.
 
-Source builds additionally require Xcode Command Line Tools with Swift 6 or later. Zsh is required only for the Zsh installer; Bash can run the build script instead.
+Source builds additionally require Xcode Command Line Tools with Swift 6 or later. These tools also provide `make` for the portable build. Zsh is required only for the Zsh installer; Bash can run the build script instead.
 
 ## Portable App
 
-No prebuilt release is published yet. This option is for an app bundle you already built or received from a trusted source, with an executable compatible with your Mac's architecture.
+No prebuilt release is published yet. Build the app from the repository root:
+
+```sh
+make build
+```
+
+The compiled bundle is `dist/Copilot Usage.app`. This command does not replace your installed app. It builds for your Mac's architecture, so only copy it to a compatible Mac.
 
 Copy **Copilot Usage.app** to `~/Applications`, complete [CLI setup](#cli-setup), and open the app. Keep the whole bundle intact. It does not need the source checkout or Swift at runtime.
 

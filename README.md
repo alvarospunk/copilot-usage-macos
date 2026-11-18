@@ -12,7 +12,13 @@ GitHub Copilot usage and today's working-day target, right in your menu bar.
 
 ### Portable App
 
-Already have a compiled **Copilot Usage.app**? Copy it to `~/Applications` and open it. No shell or Swift needed to run it. **No prebuilt download is published yet.** See [portable setup](docs/installation.md#portable-app).
+Build the portable app from the repository folder (requires Swift 6+ and `make`, included with Xcode Command Line Tools):
+
+```sh
+make build
+```
+
+Find **Copilot Usage.app** in `dist/`. Copy it to `~/Applications` and [complete CLI setup](docs/installation.md#cli-setup). No Swift needed to run it. **No prebuilt download is published yet.** See [portable setup](docs/installation.md#portable-app).
 
 ### Zsh (Recommended)
 
